@@ -9,6 +9,25 @@ uint32_t randoms[] = { 0x308b55ce, 0xdf1414e0, 0xb9edf0fe, 0x81167739, 0xf671ff0
 
 void benchmark();
 void test();
+void generate_state_with_seed(uint32_t * state, uint32_t seed);
+
+int main() {
+//    test();
+//    benchmark();
+
+    std::mt19937 generator;
+
+    for(uint32_t seed = 0; seed != 0xffffffff; seed++) {
+        generate_state_with_seed(generator._Ax, seed);
+        uint32_t potential_disk_key = generator() ^ randoms[0];
+
+        if((potential_disk_key & 0xff) == 0x30 && generator() == (potential_disk_key ^ randoms[1])) {
+            std::cout << "bios key: " << seed << ", disk key: " << potential_disk_key << std::endl;
+        }
+        if(seed % 0x01000000 == 0) std::cout << std:: hex << "seed:" << seed << std::endl;
+    }
+}
+
 
 void generate_state_with_seed(uint32_t * state, uint32_t seed){
     state[0] = seed;
@@ -16,18 +35,6 @@ void generate_state_with_seed(uint32_t * state, uint32_t seed){
     {
         state[index] = 6069 * state[index-1];
     }
-}
-
-
-int main() {
-    test();
-    benchmark();
-
-    std::mt19937 generator;
-
-    uint32_t seed = 0x4D314650;
-    generate_state_with_seed(generator._Ax, seed);
-
 }
 
 void benchmark() {
