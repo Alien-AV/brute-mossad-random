@@ -22,7 +22,12 @@ void generate_state_with_seed(uint32_t * state, uint32_t seed){
 int main() {
     test();
     benchmark();
-    return 0;
+
+    std::mt19937 generator;
+
+    uint32_t seed = 0x4D314650;
+    generate_state_with_seed(generator._Ax, seed);
+
 }
 
 void benchmark() {
@@ -45,10 +50,12 @@ void benchmark() {
 
 void test(){
     std::mt19937 generator;
-    uint32_t seed = 0x4D314650;
-    generate_state_with_seed(generator._Ax, seed);
 
-    if(generator()==0x5fb7a4ef && generator()==0x5fd7435f && generator()==0x2a5745a5){
+    generate_state_with_seed(generator._Ax, 0x4D314650);
+
+    for(auto i = 0; i < 700; i++) generator();
+
+    if(generator() == 0xBA8251E3){
         std::cout << "seeding still works";
     }else{
         std::cout << "SEEDING BROKEN!!!";
