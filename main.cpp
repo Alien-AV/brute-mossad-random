@@ -20,9 +20,9 @@ int main() {
 //    benchmark();
 
     std::vector<std::thread> threads;
-    const auto THREADS = 16;
-    const uint64_t global_start_seed = 0;
-    const uint64_t global_end_seed = 0xffffffff;
+    const auto THREADS = 8;
+    const uint64_t global_start_seed =  0xf0000000;
+    const uint64_t global_end_seed =    0xffffffff;
     const auto part_size = (global_end_seed - global_start_seed + 1) / THREADS;
 
     std::cout << std::hex;
@@ -48,7 +48,7 @@ int main() {
                 if (seed % 0x01000000 == 0){
                     {
                         std::lock_guard<std::mutex> lock(mutex);
-                        std::cout << std::hex << "seed:" << seed << std::endl;
+                        std::cout << "[" << std::this_thread::get_id() << "] percent done:" << (uint64_t)(seed-start_seed) * 100 / (end_seed-start_seed) << std::endl;
                     }
                 }
             }
