@@ -20,10 +20,15 @@ int main() {
 //    benchmark();
 
     std::vector<std::thread> threads;
+    const auto THREADS = 16;
+    const uint64_t global_start_seed = 0;
+    const uint64_t global_end_seed = 0xffffffff;
+    const auto part_size = (global_end_seed - global_start_seed + 1) / THREADS;
 
-    for(auto i = 0; i < 16; i++) {
-        uint32_t start_seed = i * 0x10000000;
-        uint32_t end_seed = start_seed + 0x0fffffff;
+    std::cout << std::hex;
+    for(auto i = 0; i < THREADS; i++) {
+        uint32_t start_seed = global_start_seed + i * part_size;
+        uint32_t end_seed = start_seed + part_size - 1;
 
         threads.push_back(std::thread([](uint32_t start_seed, uint32_t end_seed) {
             std::mt19937 generator;
