@@ -6,12 +6,13 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
+#include "utils.h"
+
+static const int INITIAL_INDEX = 0x270;
 
 void test();
 void bruteforce();
 void benchmark();
-
-void generate_state_with_seed(uint32_t * state, uint32_t seed);
 
 std::mutex mutex;
 
@@ -43,8 +44,9 @@ void bruteforce() {
 
             for (uint32_t seed = start_seed; seed != end_seed; seed++) {
                 generate_state_with_seed(generator._Ax, seed);
-                generator._Idx = 0x270;
-                if(generator()==0x00bb65fe) {
+                generator._Idx = INITIAL_INDEX;
+                int first_random_for_correct_seed = 0x00bb65fe;
+                if(generator() == first_random_for_correct_seed) {
                     std::lock_guard<std::mutex> lock(mutex);
                     std::cout << "seed: " << seed << std::endl;
                 }
@@ -61,14 +63,6 @@ void bruteforce() {
     std::for_each(threads.begin(), threads.end(), [](std::thread &thread) {
         thread.join();
     });
-}
-
-void generate_state_with_seed(uint32_t * state, uint32_t seed){
-    state[0] = seed;
-    for(size_t index = 1; index < 624; index++)
-    {
-        state[index] = 6069 * state[index-1];
-    }
 }
 
 void benchmark() {

@@ -1,3 +1,9 @@
+#include <mutex>
+#include <thread>
+#include <chrono>
+#include <sstream>
+#include <array>
+#include <random>
 #include <algorithm>
 #include <vector>
 #include <iterator>
@@ -18,4 +24,12 @@ void read_from_file(const char *filename, char** full_file_contents, size_t& siz
     ifstream.seekg (0, std::ios::beg);
     ifstream.read (*full_file_contents, size);
     ifstream.close();
+}
+
+void generate_state_with_seed(uint32_t * state, uint32_t seed){
+    state[0] = seed;
+    for(size_t index = 1; index < 624; index++)
+    {
+        state[index] = 6069 * state[index-1];
+    }
 }

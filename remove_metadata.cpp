@@ -6,14 +6,6 @@
 #include <random>
 #include "utils.h"
 
-void generate_state_with_seed(uint32_t * state, uint32_t seed){
-    state[0] = seed;
-    for(size_t index = 1; index < 624; index++)
-    {
-        state[index] = 6069 * state[index-1];
-    }
-}
-
 int main(){
     std::cout << std::hex;
 
