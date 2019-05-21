@@ -3,19 +3,16 @@
 #include <iterator>
 #include <vector>
 #include <algorithm>
+#include "utils.h"
 
 int main(){
-    std::ifstream ifstream("intel.txt.enc", std::ios::binary | std::ifstream::in | std::ifstream::ate);
-    auto size = ifstream.tellg();
-    uint32_t* memblock = new uint32_t[size/sizeof(uint32_t)];
-    ifstream.seekg (0, std::ios::beg);
-    ifstream.read ((char*)memblock, size);
-    ifstream.close();
+    char* full_file_contents = nullptr; size_t size;
+    read_from_file("C:\\Hacking\\mossad\\intel.txt.enc", &full_file_contents, size);
 
-    for(size_t i = 0; i<size/ sizeof(uint32_t); i++){
-        memblock[i] ^= 0x30303030;
+    for(size_t i = 0; i < size; i+=4){
+        *((uint32_t*)&full_file_contents[i]) ^= 0x30303030;
     }
-    std::ofstream os("C:\\Hacking\\mossad\\intel.txt.enc.unxored", std::ios::binary);
-    os.write((char*)memblock, size);
-    delete[] memblock;
+
+    write_to_file("C:\\Hacking\\mossad\\intel.txt.enc.unxored", full_file_contents, size);
+    std::cout << "unxored " << size << " bytes" << std::endl;
 }

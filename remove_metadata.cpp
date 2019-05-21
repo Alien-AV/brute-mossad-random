@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include "utils.h"
 
 void generate_state_with_seed(uint32_t * state, uint32_t seed){
     state[0] = seed;
@@ -14,16 +15,13 @@ void generate_state_with_seed(uint32_t * state, uint32_t seed){
 }
 
 int main(){
+    std::cout << std::hex;
+
+    char* full_file_content; size_t size; read_from_file("C:\\Hacking\\mossad\\intel.txt.enc.unxored", &full_file_content, size);
+
     std::mt19937 generator;
     generate_state_with_seed(generator._Ax, 0x61774d56);
 
-    std::ifstream ifstream("C:\\Hacking\\mossad\\intel.txt.enc.unxored", std::ios::binary | std::ifstream::in | std::ifstream::ate);
-    auto size = ifstream.tellg();
-    auto full_file_content = new uint8_t[size];
-    ifstream.seekg (0, std::ios::beg);
-    ifstream.read ((char*)full_file_content, size);
-    ifstream.close();
-    std::cout << std::hex;
     std::cout << "size: " << size << std::endl;
     std::ofstream os("C:\\Hacking\\mossad\\intel.txt.enc.unxored.no_metadata", std::ios::binary);
     int block_size = 49;
@@ -37,7 +35,7 @@ int main(){
             break;
         }
         std::cout << "i: " << i << std::endl;
-        os.write((char *) &full_file_content[i + 4], block_size);
+        os.write(&full_file_content[i + 4], block_size);
     }
 
     std::cout << "i: " << i << ", size: " << size << std::endl;
